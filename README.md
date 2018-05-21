@@ -9,7 +9,7 @@ Then install the latest version of Pytorch and Torchvision by the command shown 
 pip install torch torchvision
 ```
 
-Now, all of dependencies are ready and you can strat running the codes.
+Now, all of dependencies are ready and you can start running the codes.
 
 ## EXPERIMENTS
 We have done three experiments based on MLP, CNN and LSTM. All of tasks are classifications.
