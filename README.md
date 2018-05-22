@@ -1,6 +1,6 @@
 # TACTHMC
 
-This project implements the algorithm of TACTHMC and demonstrates the experiments compared with SGHMC, SGNHT, ADAM and SGD WITH MOMENTUM. All of algorithms are implemented in Python 3.6, with Pytorch 0.4.0 and Torchvision 0.2.1, so please install the relevant dependencies before running the codes or invoking the function.
+This project implements the algorithm of TACTHMC and demonstrates the experiments compared with SGHMC, SGNHT, ADAM and SGD WITH MOMENTUM. All of algorithms are implemented in Python 3.6, with Pytorch 0.4.0 and Torchvision 0.2.1, so please install the relevant dependencies before running the codes or invoking the functions.
 
 The suggested solution is to install Anaconda Python 3.6 version: https://www.anaconda.com/download/.
 
@@ -11,11 +11,15 @@ pip install torch torchvision
 
 Now, all of dependencies are ready and you can start running the codes.
 
+
 ## EXPERIMENTS
 
 We have done three experiments based on MLP, CNN and RNN. All of tasks are classifications.
 
 The task of MLP is on EMNIST. The task of CNN is on CIFAR-10. The task of LSTM is on Fashion-MNIST.
+
+In experiments, we randomly assign 0%, 20% and 30% labels for each batch of training data respectively so as to constitute a noisy training environment.
+
 
 ### MLP
 
@@ -61,3 +65,44 @@ The task of MLP is on EMNIST. The task of CNN is on CIFAR-10. The task of LSTM i
 - test_data_size:10000
 - categories: 10
 - batch_size: 64
+
+
+## Running the Preliminary Experiments
+
+### Our Methods (TACTHMC)
+```bash
+python cnn_tacthmc_append_noise.py --random-selection-percentage 0.2
+python mlp_tacthmc_append_noise.py --random-selection-percentage 0.2
+python rnn_tacthmc_append_noise.py --random-selection-percentage 0.2
+```
+
+### Baseline
+-SGD with Momentum
+```bash
+python cnn_sgd_append_noise.py --random-selection-percentage 0.2
+python mlp_sgd_append_noise.py --random-selection-percentage 0.2
+python rnn_sgd_append_noise.py --random-selection-percentage 0.2
+```
+
+-Adam
+```bash
+python cnn_adam_append_noise.py --random-selection-percentage 0.2
+python mlp_adam_append_noise.py --random-selection-percentage 0.2
+python rnn_adam_append_noise.py --random-selection-percentage 0.2
+```
+
+-SGHMC
+```bash
+python cnn_sghmc_append_noise.py --random-selection-percentage 0.2
+python mlp_sghmc_append_noise.py --random-selection-percentage 0.2
+python rnn_sghmc_append_noise.py --random-selection-percentage 0.2
+```
+
+-SGNHT
+```bash
+python cnn_sgnht_append_noise.py --random-selection-percentage 0.2
+python mlp_sgnht_append_noise.py --random-selection-percentage 0.2
+python rnn_sgnht_append_noise.py --random-selection-percentage 0.2
+```
+
+
