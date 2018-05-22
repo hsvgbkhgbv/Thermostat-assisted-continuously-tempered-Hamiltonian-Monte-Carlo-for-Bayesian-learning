@@ -136,7 +136,7 @@ The reference for SGNHT is: http://people.ee.duke.edu/~lcarin/sgnht-4.pdf
 --saving-tempering-model                                   # set up whether it is necessary to save the tempering model   
 ```
 
-Here, the tempering model is to handle the unexpected noise happening during the dynamics.
+Here, the tempering model is to handle the unexpected noise for the tempering variable occuring during the dynamics.
 
 
 ## Invoke API of TACTHMC
