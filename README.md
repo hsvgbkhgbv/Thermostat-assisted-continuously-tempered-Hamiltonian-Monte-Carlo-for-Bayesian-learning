@@ -114,31 +114,36 @@ The reference for SGNHT is: http://people.ee.duke.edu/~lcarin/sgnht-4.pdf
 
 ### Some Advanced Settings
 ```bash
-  -h, --help                                                 # show this help message and exit
-  --train-batch-size TRAIN_BATCH_SIZE                        # set up the training batch size (int)
-  --test-batch-size TEST_BATCH_SIZE                          # set up the test batch size (please set the size of the whole test data) (int)
-  --num-burn-in NUM_BURN_IN                                  # set up the number of iterations of burn-in (int)
-  --num-epochs NUM_EPOCHS                                    # set up the total number of epochs for training (int)
-  --evaluation-interval EVALUATION_INTERVAL                  # set up the interval of evaluation (int)
-  --eta-u ETA_U                                              # set up the learning rate of parameters, which should be divided by the size of the whole training dataset (float)
-  --eta-xi ETA_XI                                            # set up the learning rate of the tempering variable which is similar to that of parameters (float)
-  --c-u C_U                                                  # set up the noise level of parameters (float)
-  --c-xi C_XI                                                # set up the noise level of the tempering variable (float)
-  --gamma-xi GAMMA_XI                                        # set up the value of thermal initia (float)
-  --prior-precision PRIOR_PRECISION                          # set up the penalizer of L2-norm (float)
-  --random-selection-percentage RANDOM_SELECTION_PERCENTAGE  # set up the percentage of random assignment on labels (float)
-  --enable-cuda                                              # use cuda if available (action=true)
-  --device-num DEVICE_NUM                                    # select an appropriate GPU for usage (int)
-  --experiments-num EXPERIMENTS_NUM                          # set up the label for the experiment (int)
-  --tempering-model-type TEMPERING_MODEL_TYPE                # set up the model type for the tempering variable (1 for Metadynamics/2 for ABF) (int)
-  --load-tempering-model                                     # set up whether necessarily load pre-trained tempering model (action=true)
-  --tempering-model-filename TEMPERING_MODEL_FILENAME        # set up the tempering model filename (int)
-  --saving-tempering-model                                   # set up whether it is necessary to save the tempering model   
+-h, --help                                                 # show this help message and exit
+--train-batch-size TRAIN_BATCH_SIZE                        # set up the training batch size (int)
+--test-batch-size TEST_BATCH_SIZE                          # set up the test batch size (please set the size of the whole test data) (int)
+--num-burn-in NUM_BURN_IN                                  # set up the number of iterations of burn-in (int)
+--num-epochs NUM_EPOCHS                                    # set up the total number of epochs for training (int)
+--evaluation-interval EVALUATION_INTERVAL                  # set up the interval of evaluation (int)
+--eta-u ETA_U                                              # set up the learning rate of parameters, which should be divided by the size of the whole training dataset (float)
+--eta-xi ETA_XI                                            # set up the learning rate of the tempering variable which is similar to that of parameters (float)
+--c-u C_U                                                  # set up the noise level of parameters (float)
+--c-xi C_XI                                                # set up the noise level of the tempering variable (float)
+--gamma-xi GAMMA_XI                                        # set up the value of thermal initia (float)
+--prior-precision PRIOR_PRECISION                          # set up the penalizer of L2-norm (float)
+--random-selection-percentage RANDOM_SELECTION_PERCENTAGE  # set up the percentage of random assignment on labels (float)
+--enable-cuda                                              # use cuda if available (action=true)
+--device-num DEVICE_NUM                                    # select an appropriate GPU for usage (int)
+--experiments-num EXPERIMENTS_NUM                          # set up the label for the experiment (int)
+--tempering-model-type TEMPERING_MODEL_TYPE                # set up the model type for the tempering variable (1 for Metadynamics/2 for ABF) (int)
+--load-tempering-model                                     # set up whether necessarily load pre-trained tempering model (action=true)
+--tempering-model-filename TEMPERING_MODEL_FILENAME        # set up the tempering model filename (int)
+--saving-tempering-model                                   # set up whether it is necessary to save the tempering model   
 ```
+
+Here, the tempering model is to handle the unexpected noise happening during the dynamics.
+
 
 ## Invoke API of TACTHMC
 
-Initialize an instance of the object TACTHMC such as
+### Formal Procedures
+
+1. Initialize an instance of the object TACTHMC such as
 ```bash
 sampler = TACTHMC(model, N, eta_u0, eta_xi0, c_u0, c_xi0, gamma_xi0, enable_cuda, smooth_area=0.1, gaussian_decay=1e-3, version='accurate', temper_model='Metadynamics')
 ```
@@ -166,3 +171,40 @@ sampler = TACTHMC(model, N, eta_u0, eta_xi0, c_u0, c_xi0, gamma_xi0, enable_cuda
 ``` version ``` means how to assign thermostats to parameters, which can be selected from either ``` 'accurate' ``` or ``` 'approximate' ```
 
 ``` temper_model ``` means which model is selected as the tempering variable model, which can be selectd between ``` 'Metadynamics' ``` and ``` 'ABF' ```
+
+2. Initialize the momenta of parameters such as
+
+```bash
+sampler.resample_momenta()
+```
+
+3. Update the parameters and the tempering variable such as
+
+```bash
+sampler.update(loss)
+```
+
+``` loss ``` can be the output from any loss function in Pytorch
+
+4. Periodically Resample the the momenta of parameters such as
+
+```bash
+sampler.resample_momenta()
+```
+
+5. Go back to step 1
+
+### Some Outstanding Utilities
+
+```bash
+sampler.get_z_u()                                   # get the norm of thermostats of parameters
+sampler.get_z_xi()                                  # get the norm of thermostats of the tempering variable
+sampler.get_fU()                                    # get the current force of potential w.r.t the tempering variable
+sampler.temper_model.loader(filename, enable_cuda)  # load the pre-trained tempering model
+sampler.temper_model.saver(nIter, path)             # save the current tempering model
+sampler.temper_model.estimate_force(xi)             # estimate the force caused by the unexpected noise of the current tempering variable xi
+sampler.temper_model.update(xi)                     # update the tempering model for the current xi when the model is Metadynamics
+sampler.temper_model.update(xi, fcurr)              # update the tempering model for the current xi by the current force fcurr when the model is ABF
+sampler.temper_model.offset()                       # offset the stacked Gaussian when the model is Metadynamics
+```
+
