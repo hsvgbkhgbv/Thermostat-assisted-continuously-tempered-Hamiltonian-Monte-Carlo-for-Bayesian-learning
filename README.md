@@ -135,3 +135,11 @@ The reference for SGNHT is: http://people.ee.duke.edu/~lcarin/sgnht-4.pdf
   --tempering-model-filename TEMPERING_MODEL_FILENAME        # set up the tempering model filename (int)
   --saving-tempering-model                                   # set up whether it is necessary to save the tempering model   
 ```
+
+## Invoke API of TACTHMC
+
+Initialize an instance of the object TACTHMC such as
+```bash
+sampler = TACTHMC(model, N, eta_u0, eta_xi0, c_u0, c_xi0, gamma_xi0, enable_cuda, smooth_area=0.1, gaussian_decay=1e-3, version='accurate', temper_model='Metadynamics')
+```
+```bash model ``` means the model instance constructed by Pytorch
