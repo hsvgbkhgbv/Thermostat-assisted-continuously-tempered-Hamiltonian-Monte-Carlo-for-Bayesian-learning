@@ -17,10 +17,12 @@ We have done three experiments based on MLP, CNN and RNN. All of tasks are class
 
 The task of MLP is on EMNIST. The task of CNN is on CIFAR-10. The task of LSTM is on Fashion-MNIST.
 
-MLP:
+### MLP
+
+- architecture:
 $$
 \begin{split}
-\text{architecture}: 784 & \rightarrow \text{linear} \\
+784 & \rightarrow \text{linear} \\
 & \rightarrow \text{ReLU} \\
 & \rightarrow 100 \\
 & \rightarrow \text{linear} \\             
@@ -29,16 +31,15 @@ $$
 \end{split}
 $$
 
-              
-dataset: EMNIST-BALANCED
+- dataset: EMNIST-BALANCED
 
-train_data_size: 112800
+- train_data_size: 112800
 
-test_data_size: 18800
+- test_data_size: 18800
 
-categories: 47
+- categories: 47
 
-batch_size: 128
+- batch_size: 128
 
 
 CNN:
