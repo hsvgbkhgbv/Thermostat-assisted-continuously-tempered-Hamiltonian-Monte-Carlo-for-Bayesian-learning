@@ -78,28 +78,28 @@ python rnn_tacthmc_append_noise.py --random-selection-percentage 0.2
 
 ### Baseline
 
-**SGD with Momentum
+**SGD** with Momentum
 ```bash
 python cnn_sgd_append_noise.py --random-selection-percentage 0.2
 python mlp_sgd_append_noise.py --random-selection-percentage 0.2
 python rnn_sgd_append_noise.py --random-selection-percentage 0.2
 ```
 
-**Adam
+**Adam**
 ```bash
 python cnn_adam_append_noise.py --random-selection-percentage 0.2
 python mlp_adam_append_noise.py --random-selection-percentage 0.2
 python rnn_adam_append_noise.py --random-selection-percentage 0.2
 ```
 
-**SGHMC
+**SGHMC**
 ```bash
 python cnn_sghmc_append_noise.py --random-selection-percentage 0.2
 python mlp_sghmc_append_noise.py --random-selection-percentage 0.2
 python rnn_sghmc_append_noise.py --random-selection-percentage 0.2
 ```
 
-**SGNHT
+**SGNHT**
 ```bash
 python cnn_sgnht_append_noise.py --random-selection-percentage 0.2
 python mlp_sgnht_append_noise.py --random-selection-percentage 0.2
