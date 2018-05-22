@@ -82,7 +82,7 @@ $$
 For the sampling algorithms such as SGHMC, SGNHT and TACTHMC, we use the fully bayesian to evaluate the performance.
 
 $$
-P(\theta | D_{train}) = P(D_{train}, \theta) / \log Z(\theta)
+P(\theta | D_{train}) = \frac{P(D_{train}, \theta)}{\log Z(\theta)}
 $$
 
 $$
@@ -230,4 +230,3 @@ sampler.temper_model.update(xi)                     # update the tempering model
 sampler.temper_model.update(xi, fcurr)              # update the tempering model for the current xi by the current force fcurr when the model is ABF
 sampler.temper_model.offset()                       # offset the stacked Gaussian when the model is Metadynamics
 ```
-
