@@ -73,12 +73,19 @@ For the conventional optimization algorithms such as Adam and SGD, we use the po
 
 $$
 \begin{split}
-\theta_{MAP} = arg \max_{\theta} \log P(D_{train}, \theta) \\
-P(D_{test}| \theta_{MAP})
+&\theta_{MAP} = arg \max_{\theta} \log P(D_{train}, \theta) \\
+&\text{**performance**} = P(D_{test}| \theta_{MAP})
 \end{split}
 $$
 
 For the sampling algorithms such as SGHMC, SGNHT and TACTHMC, we use the fully bayesian to evaluate the performance.
+
+$$
+\begin{split}
+P(\theta | D_{train}) = \log P(D_{train}, \theta) - \logZ(\theta)
+\text{**performance**} = \int_{\theta} P(D_{test}| \theta) P(\theta | D_{train}) d\theta
+\end{split}
+$$
 
 
 ## Run Preliminary Experiments
