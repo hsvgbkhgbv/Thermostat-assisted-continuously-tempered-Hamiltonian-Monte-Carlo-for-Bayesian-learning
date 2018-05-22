@@ -107,7 +107,9 @@ python rnn_sgnht_append_noise.py --random-selection-percentage 0.2
 ```
 
 In these experiments, we implement SGNHT and SGHMC, as well as invoke SGD and Adam from Pytorch directly.
+
 The reference for SGHMC is: https://arxiv.org/pdf/1402.4102.pdf
+
 The reference for SGNHT is: http://people.ee.duke.edu/~lcarin/sgnht-4.pdf
 
 ### Some Advanced Settings
