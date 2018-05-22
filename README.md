@@ -18,7 +18,7 @@ We have done three experiments based on MLP, CNN and RNN. All of tasks are class
 
 The task of MLP is on EMNIST. The task of CNN is on CIFAR-10. The task of LSTM is on Fashion-MNIST.
 
-In experiments, we randomly assign 0%, 20% and 30% labels for each batch of training data respectively so as to constitute a noisy training environment.
+In experiments, we assign random labels to 0%, 20% and 30% of each batch of training data respectively so as to constitute a noisy training environment.
 
 
 ### MLP
@@ -67,6 +67,20 @@ In experiments, we randomly assign 0%, 20% and 30% labels for each batch of trai
 - batch_size: 64
 
 
+### Evaluation Method
+
+For the conventional optimization algorithms such as Adam and SGD, we use the point estimate to evaluate the performance.
+
+$$
+\begin{split}
+\theta_{MAP} = arg \max_{\theta} \log P(D_{train}, \theta) \\
+P(D_{test}| \theta_{MAP})
+\end{split}
+$$
+
+For the sampling algorithms such as SGHMC, SGNHT and TACTHMC, we use the fully bayesian to evaluate the performance.
+
+
 ## Run Preliminary Experiments
 
 ### Our Methods (TACTHMC)
@@ -78,7 +92,7 @@ python rnn_tacthmc_append_noise.py --random-selection-percentage 0.2
 
 ### Baseline
 
-**SGD** with Momentum
+**SGD with Momentum**
 ```bash
 python cnn_sgd_append_noise.py --random-selection-percentage 0.2
 python mlp_sgd_append_noise.py --random-selection-percentage 0.2
