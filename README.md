@@ -24,11 +24,17 @@ architecture: 784->linear
               ->linear
               ->ReLU
               ->47
+              
 dataset: EMNIST-BALANCED
+
 train_data_size: 112800
+
 test_data_size: 18800
+
 categories: 47
+
 batch_size: 128
+
 
 CNN:
 architecture: 32x32->Conv2D(kernel=3x3x3x16, padding=1x1, stride= 1x1)
@@ -42,11 +48,17 @@ architecture: 32x32->Conv2D(kernel=3x3x3x16, padding=1x1, stride= 1x1)
               ->100
               ->linear->ReLU
               ->10
-dataset: CIFAR10
+              
+dataset: CIFAR-10
+
 train_data_size: 60000
+
 test_data_size:10000
+
 categories: 10
+
 batch_size: 64
+
 
 RNN:
 architecture: 28->LSTMCell(input=28, output=128) x 28 times
@@ -58,8 +70,13 @@ architecture: 28->LSTMCell(input=28, output=128) x 28 times
               ->linear
               ->ReLU
               ->10
+              
 dataset: Fashion-MNIST
+
 train_data_size: 60000
+
 test_data_size:10000
+
 categories: 10
+
 batch_size: 64
