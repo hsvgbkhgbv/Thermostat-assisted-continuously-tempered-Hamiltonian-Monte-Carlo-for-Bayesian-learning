@@ -27,47 +27,37 @@ The task of MLP is on EMNIST. The task of CNN is on CIFAR-10. The task of LSTM i
 - batch_size: 128
 
 
-CNN:
-architecture: 32x32->Conv2D(kernel=3x3x3x16, padding=1x1, stride= 1x1)
-              ->ReLU
-              ->MaxPooling2D(kernel=2x2, stride=2x2)
-              ->Conv2D(kernel=3x3x16x16, padding=1x1, stride=1x1)
-              ->ReLU
-              ->MaxPooling2D(kernel=2x2, stride=2x2)
-              ->Flatten
-              ->linear->ReLU
-              ->100
-              ->linear->ReLU
-              ->10
-              
-dataset: CIFAR-10
-
-train_data_size: 60000
-
-test_data_size:10000
-
-categories: 10
-
-batch_size: 64
+### CNN
+- architecture: 32x32->Conv2D(kernel=3x3x3x16, padding=1x1, stride= 1x1)
+                ->ReLU
+                ->MaxPooling2D(kernel=2x2, stride=2x2)
+                ->Conv2D(kernel=3x3x16x16, padding=1x1, stride=1x1)
+                ->ReLU
+                ->MaxPooling2D(kernel=2x2, stride=2x2)
+                ->Flatten
+                ->linear->ReLU
+                ->100
+                ->linear->ReLU
+                ->10        
+- dataset: CIFAR-10
+- train_data_size: 60000
+- test_data_size:10000
+- categories: 10
+- batch_size: 64
 
 
-RNN:
-architecture: 28->LSTMCell(input=28, output=128) x 28 times
-              ->the output of the last time step
-              ->ReLU
-              ->linear
-              ->ReLU
-              ->64
-              ->linear
-              ->ReLU
-              ->10
-              
-dataset: Fashion-MNIST
-
-train_data_size: 60000
-
-test_data_size:10000
-
-categories: 10
-
-batch_size: 64
+### RNN
+- architecture: 28->LSTMCell(input=28, output=128) x 28 times
+                ->the output of the last time step
+                ->ReLU
+                ->linear
+                ->ReLU
+                ->64
+                ->linear
+                ->ReLU
+                ->10           
+- dataset: Fashion-MNIST
+- train_data_size: 60000
+- test_data_size:10000
+- categories: 10
+- batch_size: 64
