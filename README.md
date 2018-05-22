@@ -20,12 +20,12 @@ The task of MLP is on EMNIST. The task of CNN is on CIFAR-10. The task of LSTM i
 MLP:
 $$
 \begin{split}
-\text{architecture}: 784 & \rightarrow \text{linear}\\
-& \rightarrow \text{ReLU}\\
-& \rightarrow 100\\
-& \rightarrow \text{linear}\\             
-& \rightarrow \text{ReLU}\\           
-& \rightarrow 47\\
+\text{architecture}: 784 & \rightarrow \text{linear} \\
+& \rightarrow \text{ReLU} \\
+& \rightarrow 100 \\
+& \rightarrow \text{linear} \\             
+& \rightarrow \text{ReLU} \\           
+& \rightarrow 47 \\
 \end{split}
 $$
 
