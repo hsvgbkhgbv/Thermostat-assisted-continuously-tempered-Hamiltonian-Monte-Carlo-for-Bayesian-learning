@@ -20,12 +20,13 @@ The task of MLP is on EMNIST. The task of CNN is on CIFAR-10. The task of LSTM i
 ### MLP
 
 - architecture:
-  - 784 -> linear
-  - -> ReLU
-  - -> 100
-  - -> linear            
-  - -> ReLU          
-  - -> 47
+  | 784 |
+  | linear |
+  | ReLU |
+  | 100 |
+  | linear |
+  | ReLU |
+  | 47 |
 
 - dataset: EMNIST-BALANCED
 
