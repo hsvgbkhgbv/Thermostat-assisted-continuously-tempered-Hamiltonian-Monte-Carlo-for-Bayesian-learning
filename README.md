@@ -86,7 +86,7 @@ P(\theta | D_{train}) = \log P(D_{train}, \theta) - \log Z(\theta)
 $$
 
 $$
-eval = \int_{\theta} P(D_{test}| \theta) P(\theta | D_{train}) d\theta
+eval = \int_{\theta} P(D_{test}| \theta) P(\theta | D_{train}) \ d\theta
 $$
 
 
