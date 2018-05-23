@@ -162,7 +162,6 @@ The reference for Adam is: https://arxiv.org/pdf/1412.6980.pdf
 --device-num DEVICE_NUM                                    # select an appropriate GPU for usage (int)
 --tempering-model-type TEMPERING_MODEL_TYPE                # set up the model type for the tempering variable (1 for Metadynamics/2 for ABF) (int)
 --load-tempering-model                                     # set up whether necessarily load pre-trained tempering model (action=true)
---tempering-model-filename TEMPERING_MODEL_FILENAME        # set up the tempering model filename (int)
 --save-tempering-model                                     # set up whether it is necessary to save the tempering model (bool)
 --tempering-model-path TEMPERING_MODEL_PATH                # set up the path for saving or loading the tempering model (str)
 ```
