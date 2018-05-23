@@ -39,9 +39,11 @@ In experiments, we assign random labels to 0%, 20% and 30% of each batch of trai
                 ->ReLU
                 ->MaxPooling2D(kernel=2x2, stride=2x2)
                 ->Flatten
-                ->linear->ReLU
+                ->linear
+                ->ReLU
                 ->100
-                ->linear->ReLU
+                ->linear
+                ->ReLU
                 ->10        
 - dataset: CIFAR-10
 - train_data_size: 60000
@@ -94,9 +96,9 @@ $$
 
 ### Our Methods (TACTHMC)
 ```bash
-python cnn_tacthmc.py --permutation 0.2
-python mlp_tacthmc.py --permutation 0.2
-python rnn_tacthmc.py --permutation 0.2
+python cnn_tacthmc.py --permutation 0.2 --c-theta 0.1
+python mlp_tacthmc.py --permutation 0.2 --c-theta 0.05
+python rnn_tacthmc.py --permutation 0.2 --c-theta 0.15
 ```
 
 ### Baseline
@@ -117,16 +119,16 @@ python rnn_adam.py --permutation 0.2
 
 **SGHMC**
 ```bash
-python cnn_sghmc.py --permutation 0.2
-python mlp_sghmc.py --permutation 0.2
-python rnn_sghmc.py --permutation 0.2
+python cnn_sghmc.py --permutation 0.2 --c-theta 0.1
+python mlp_sghmc.py --permutation 0.2 --c-theta 0.1
+python rnn_sghmc.py --permutation 0.2 --c-theta 0.1
 ```
 
 **SGNHT**
 ```bash
-python cnn_sgnht.py --permutation 0.2
-python mlp_sgnht.py --permutation 0.2
-python rnn_sgnht.py --permutation 0.2
+python cnn_sgnht.py --permutation 0.2 --c-theta 0.1
+python mlp_sgnht.py --permutation 0.2 --c-theta 0.1
+python rnn_sgnht.py --permutation 0.2 --c-theta 0.1
 ```
 
 In these experiments, we implement SGNHT and SGHMC, as well as invoke SGD and Adam from Pytorch directly.
