@@ -156,7 +156,7 @@ The reference for Adam is: https://arxiv.org/pdf/1412.6980.pdf
 --c-xi C_XI                                                # set up the noise level of the tempering variable (float)
 --gamma-theta GAMMA_THETA                                  # set up the value of the thermal initia of parameters (float)
 --gamma-xi GAMMA_XI                                        # set up the value of the thermal initia of the tempering variable (float)
---prior-precision PRIOR_PRECISION                          # set up the penalizer of L2-norm (float)
+--prior-precision PRIOR_PRECISION                          # set up the penalty parameter of L2-Regularizer (float)
 --permutation PERMUTATION                                  # set up the percentage of random assignments on labels (float)
 --enable-cuda                                              # use cuda if available (action=true)
 --device-num DEVICE_NUM                                    # select an appropriate GPU for usage (int)
@@ -196,7 +196,7 @@ sampler = TACTHMC(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_th
 
 ``` enable_cuda ``` means whether GPU is available, which should be input a boolean
 
-``` smooth_area ``` means the smooth area of the confined potential for the tempering variable, which should be input a float
+``` smooth_area ``` means the half range of the standard temperature area, which should be input a float
 
 ``` gaussian_decay ``` means the decayed height of the stacked Gaussian (which is only feasible when ``` temper_model='Metadynamics' ```), which should be input a float
 
