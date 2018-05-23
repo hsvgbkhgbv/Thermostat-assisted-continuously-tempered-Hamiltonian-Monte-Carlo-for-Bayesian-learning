@@ -16,7 +16,7 @@ Now, all of dependencies are ready and you can start running the codes.
 
 We have done three experiments based on MLP, CNN and RNN. All of tasks are classifications.
 
-The task of MLP is on EMNIST. The task of CNN is on CIFAR-10. The task of LSTM is on Fashion-MNIST.
+The task of MLP is on EMNIST. The task of CNN is on CIFAR-10. The task of RNN is on Fashion-MNIST.
 
 In experiments, we assign random labels to 0%, 20% and 30% of each batch of training data respectively so as to constitute a noisy training environment.
 
