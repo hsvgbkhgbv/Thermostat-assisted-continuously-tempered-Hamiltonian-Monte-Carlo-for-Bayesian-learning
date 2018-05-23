@@ -94,39 +94,39 @@ $$
 
 ### Our Methods (TACTHMC)
 ```bash
-python cnn_tacthmc_append_noise.py --random-selection-percentage 0.2
-python mlp_tacthmc_append_noise.py --random-selection-percentage 0.2
-python rnn_tacthmc_append_noise.py --random-selection-percentage 0.2
+python cnn_tacthmc_append_noise.py --permutation 0.2
+python mlp_tacthmc_append_noise.py --permutation 0.2
+python rnn_tacthmc_append_noise.py --permutation 0.2
 ```
 
 ### Baseline
 
 **SGD with Momentum**
 ```bash
-python cnn_sgd_append_noise.py --random-selection-percentage 0.2
-python mlp_sgd_append_noise.py --random-selection-percentage 0.2
-python rnn_sgd_append_noise.py --random-selection-percentage 0.2
+python cnn_sgd_append_noise.py --permutation 0.2
+python mlp_sgd_append_noise.py --permutation 0.2
+python rnn_sgd_append_noise.py --permutation 0.2
 ```
 
 **Adam**
 ```bash
-python cnn_adam_append_noise.py --random-selection-percentage 0.2
-python mlp_adam_append_noise.py --random-selection-percentage 0.2
-python rnn_adam_append_noise.py --random-selection-percentage 0.2
+python cnn_adam_append_noise.py --permutation 0.2
+python mlp_adam_append_noise.py --permutation 0.2
+python rnn_adam_append_noise.py --permutation 0.2
 ```
 
 **SGHMC**
 ```bash
-python cnn_sghmc_append_noise.py --random-selection-percentage 0.2
-python mlp_sghmc_append_noise.py --random-selection-percentage 0.2
-python rnn_sghmc_append_noise.py --random-selection-percentage 0.2
+python cnn_sghmc_append_noise.py --permutation 0.2
+python mlp_sghmc_append_noise.py --permutation 0.2
+python rnn_sghmc_append_noise.py --permutation 0.2
 ```
 
 **SGNHT**
 ```bash
-python cnn_sgnht_append_noise.py --random-selection-percentage 0.2
-python mlp_sgnht_append_noise.py --random-selection-percentage 0.2
-python rnn_sgnht_append_noise.py --random-selection-percentage 0.2
+python cnn_sgnht_append_noise.py --permutation 0.2
+python mlp_sgnht_append_noise.py --permutation 0.2
+python rnn_sgnht_append_noise.py --permutation 0.2
 ```
 
 In these experiments, we implement SGNHT and SGHMC, as well as invoke SGD and Adam from Pytorch directly.
@@ -134,6 +134,11 @@ In these experiments, we implement SGNHT and SGHMC, as well as invoke SGD and Ad
 The reference for SGHMC is: https://arxiv.org/pdf/1402.4102.pdf
 
 The reference for SGNHT is: http://people.ee.duke.edu/~lcarin/sgnht-4.pdf
+
+The reference for SGD is: http://leon.bottou.org/publications/pdf/compstat-2010.pdf
+
+The reference for Adam is: https://arxiv.org/pdf/1412.6980.pdf
+
 
 ### Some Advanced Settings
 ```bash
@@ -143,20 +148,21 @@ The reference for SGNHT is: http://people.ee.duke.edu/~lcarin/sgnht-4.pdf
 --num-burn-in NUM_BURN_IN                                  # set up the number of iterations of burn-in (int)
 --num-epochs NUM_EPOCHS                                    # set up the total number of epochs for training (int)
 --evaluation-interval EVALUATION_INTERVAL                  # set up the interval of evaluation (int)
---eta-u ETA_U                                              # set up the learning rate of parameters, which should be divided by the size of the whole training dataset (float)
+--eta-theta ETA_THETA                                      # set up the learning rate of parameters, which should be divided by the size of the whole training dataset (float)
 --eta-xi ETA_XI                                            # set up the learning rate of the tempering variable which is similar to that of parameters (float)
---c-u C_U                                                  # set up the noise level of parameters (float)
+--c-theta C_THETA                                          # set up the noise level of parameters (float)
 --c-xi C_XI                                                # set up the noise level of the tempering variable (float)
---gamma-xi GAMMA_XI                                        # set up the value of thermal initia (float)
+--gamma-theta GAMMA_THETA                                  # set up the value of the thermal initia of parameters (float)
+--gamma-xi GAMMA_XI                                        # set up the value of the thermal initia of the tempering variable (float)
 --prior-precision PRIOR_PRECISION                          # set up the penalizer of L2-norm (float)
---random-selection-percentage RANDOM_SELECTION_PERCENTAGE  # set up the percentage of random assignment on labels (float)
+--permutation PERMUTATION                                  # set up the percentage of random assignments on labels (float)
 --enable-cuda                                              # use cuda if available (action=true)
 --device-num DEVICE_NUM                                    # select an appropriate GPU for usage (int)
---experiments-num EXPERIMENTS_NUM                          # set up the label for the experiment (int)
 --tempering-model-type TEMPERING_MODEL_TYPE                # set up the model type for the tempering variable (1 for Metadynamics/2 for ABF) (int)
 --load-tempering-model                                     # set up whether necessarily load pre-trained tempering model (action=true)
 --tempering-model-filename TEMPERING_MODEL_FILENAME        # set up the tempering model filename (int)
---saving-tempering-model                                   # set up whether it is necessary to save the tempering model   
+--save-tempering-model                                     # set up whether it is necessary to save the tempering model (bool)
+--tempering-model-path TEMPERING_MODEL_PATH                # set up the path for saving or loading the tempering model (str)
 ```
 
 Here, the tempering model is to handle the unexpected noise for the tempering variable occuring during the dynamics.
@@ -168,20 +174,22 @@ Here, the tempering model is to handle the unexpected noise for the tempering va
 
 1. Initialize an instance of the object TACTHMC such as
 ```bash
-sampler = TACTHMC(model, N, eta_u0, eta_xi0, c_u0, c_xi0, gamma_xi0, enable_cuda, smooth_area=0.1, gaussian_decay=1e-3, version='accurate', temper_model='Metadynamics')
+sampler = TACTHMC(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_theta0, gamma_xi0, enable_cuda, smooth_area=0.1, gaussian_decay=1e-3, version='accurate', temper_model='Metadynamics')
 ```
 
 ``` model ``` means the model instance constructed by Pytorch, which should be an instance inherited from ``` nn.Module ```
 
 ``` N ``` means the size of training dataset, which should be input an int
 
-``` eta_u0 ``` means the learning rate of parameters divided by ``` N ```, which should be input a float
+``` eta_theta0 ``` means the learning rate of parameters divided by ``` N ```, which should be input a float
 
 ``` eta_xi0 ``` means the learning rate of the tempering variable divided by ``` N ```, which should be input a float
 
-``` c_u0 ``` means the noise level of parameters, which should be input a float
+``` c_theta0 ``` means the noise level of parameters, which should be input a float
 
 ``` c_xi0 ``` means the noise level of the tempering variable, which should be input a float
+
+``` gamma_theta0 ``` means the noise level of parameters, which should be input a float
 
 ``` gamma_xi0 ``` means the thermal initia of the tempering variable, which should be input a float
 
@@ -220,7 +228,7 @@ sampler.resample_momenta()
 ### Some Outstanding Utilities
 
 ```bash
-sampler.get_z_u()                                   # get the norm of thermostats of parameters
+sampler.get_z_theta()                               # get the norm of thermostats of parameters
 sampler.get_z_xi()                                  # get the norm of thermostats of the tempering variable
 sampler.get_fU()                                    # get the current force of potential w.r.t the tempering variable
 sampler.temper_model.loader(filename, enable_cuda)  # load the pre-trained tempering model
