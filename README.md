@@ -94,39 +94,39 @@ $$
 
 ### Our Methods (TACTHMC)
 ```bash
-python cnn_tacthmc_append_noise.py --permutation 0.2
-python mlp_tacthmc_append_noise.py --permutation 0.2
-python rnn_tacthmc_append_noise.py --permutation 0.2
+python cnn_tacthmc.py --permutation 0.2
+python mlp_tacthmc.py --permutation 0.2
+python rnn_tacthmc.py --permutation 0.2
 ```
 
 ### Baseline
 
 **SGD with Momentum**
 ```bash
-python cnn_sgd_append_noise.py --permutation 0.2
-python mlp_sgd_append_noise.py --permutation 0.2
-python rnn_sgd_append_noise.py --permutation 0.2
+python cnn_sgd.py --permutation 0.2
+python mlp_sgd.py --permutation 0.2
+python rnn_sgd.py --permutation 0.2
 ```
 
 **Adam**
 ```bash
-python cnn_adam_append_noise.py --permutation 0.2
-python mlp_adam_append_noise.py --permutation 0.2
-python rnn_adam_append_noise.py --permutation 0.2
+python cnn_adam.py --permutation 0.2
+python mlp_adam.py --permutation 0.2
+python rnn_adam.py --permutation 0.2
 ```
 
 **SGHMC**
 ```bash
-python cnn_sghmc_append_noise.py --permutation 0.2
-python mlp_sghmc_append_noise.py --permutation 0.2
-python rnn_sghmc_append_noise.py --permutation 0.2
+python cnn_sghmc.py --permutation 0.2
+python mlp_sghmc.py --permutation 0.2
+python rnn_sghmc.py --permutation 0.2
 ```
 
 **SGNHT**
 ```bash
-python cnn_sgnht_append_noise.py --permutation 0.2
-python mlp_sgnht_append_noise.py --permutation 0.2
-python rnn_sgnht_append_noise.py --permutation 0.2
+python cnn_sgnht.py --permutation 0.2
+python mlp_sgnht.py --permutation 0.2
+python rnn_sgnht.py --permutation 0.2
 ```
 
 In these experiments, we implement SGNHT and SGHMC, as well as invoke SGD and Adam from Pytorch directly.
