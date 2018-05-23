@@ -5,7 +5,7 @@ import re
 
 class TACTHMC:
 
-    def __init__(self, model, N, eta_u0, eta_xi0, c_u0, c_xi0, gamma_xi0, enable_cuda, smooth_area=0.1, gaussian_decay=1e-3, version='accurate', temper_model='Metadynamics'):
+    def __init__(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_theta0, gamma_xi0, enable_cuda, smooth_area=0.1, gaussian_decay=1e-3, version='accurate', temper_model='Metadynamics'):
         self.N = N
         self.model = model
         self.version = version
@@ -30,13 +30,14 @@ class TACTHMC:
                 size_b = module.bias.data.shape
                 module.register_buffer('r_w', torch.zeros(size_w))
                 module.register_buffer('r_b', torch.zeros(size_b))
-                module.register_buffer('eta_u', torch.Tensor([eta_u0*self.N]))
-                module.register_buffer('c_u', torch.Tensor([c_u0]))
+                module.register_buffer('eta_theta', torch.Tensor([eta_theta0*self.N]))
+                module.register_buffer('c_theta', torch.Tensor([c_theta0]))
+                module.register_buffer('gamma_theta', torch.Tensor([gamma_theta0]))
                 if self.version == 'approx':
-                    module.register_buffer('z_u', module.c_u)
+                    module.register_buffer('z_u', module.c_theta)
                 elif self.version == 'accurate':
-                    module.register_buffer('z_w', module.c_u)
-                    module.register_buffer('z_b', module.c_u)
+                    module.register_buffer('z_w', module.c_theta)
+                    module.register_buffer('z_b', module.c_theta)
                 module.register_buffer('n_w', torch.zeros(size_w))
                 module.register_buffer('n_b', torch.zeros(size_b))
             elif self.pattern2.match(name):
@@ -48,15 +49,16 @@ class TACTHMC:
                 module.register_buffer('r_bih', torch.zeros(size_bih))
                 module.register_buffer('r_whh', torch.zeros(size_whh))
                 module.register_buffer('r_bhh', torch.zeros(size_bhh))
-                module.register_buffer('eta_u', torch.Tensor([eta_u0*self.N]))
-                module.register_buffer('c_u', torch.Tensor([c_u0]))
+                module.register_buffer('eta_theta', torch.Tensor([eta_theta0*self.N]))
+                module.register_buffer('c_theta', torch.Tensor([c_theta0]))
+                module.register_buffer('gamma_theta', torch.Tensor([gamma_theta0]))
                 if self.version == 'approx':
-                    module.register_buffer('z_u', module.c_u)
+                    module.register_buffer('z_u', module.c_theta)
                 elif self.version == 'accurate':
-                    module.register_buffer('z_wih', module.c_u)
-                    module.register_buffer('z_bih', module.c_u)
-                    module.register_buffer('z_whh', module.c_u)
-                    module.register_buffer('z_bhh', module.c_u)
+                    module.register_buffer('z_wih', module.c_theta)
+                    module.register_buffer('z_bih', module.c_theta)
+                    module.register_buffer('z_whh', module.c_theta)
+                    module.register_buffer('z_bhh', module.c_theta)
                 module.register_buffer('n_wih', torch.zeros(size_wih))
                 module.register_buffer('n_bih', torch.zeros(size_bih))
                 module.register_buffer('n_whh', torch.zeros(size_whh))
@@ -117,14 +119,14 @@ class TACTHMC:
                 w, dw = module.weight.data, module.weight.grad.data
                 b, db = module.bias.data, module.bias.grad.data
                 if self.version == 'approx':
-                    module.z_u.add_(invg**2 * (((module.r_w**2).sum() + (module.r_b**2).sum()) / (w.numel() + b.numel()) - module.eta_u / self.N))
-                    module.r_w.add_(invg * (- dw) * module.eta_u + invg * module.n_w.normal_() * (2 * module.c_u * module.eta_u / self.N).sqrt_() - invg**2 * module.z_u * module.r_w)
-                    module.r_b.add_(invg * (- db) * module.eta_u + invg * module.n_b.normal_() * (2 * module.c_u * module.eta_u / self.N).sqrt_() - invg**2 * module.z_u * module.r_b)
+                    module.z_u.add_(invg**2 * (((module.r_w**2).sum() + (module.r_b**2).sum()) / (w.numel() + b.numel()) - module.eta_theta / self.N) / module.gamma_theta)
+                    module.r_w.add_(invg * (- dw) * module.eta_theta + invg * module.n_w.normal_() * (2 * module.c_theta * module.eta_theta / self.N).sqrt_() - invg**2 * module.z_u * module.r_w)
+                    module.r_b.add_(invg * (- db) * module.eta_theta + invg * module.n_b.normal_() * (2 * module.c_theta * module.eta_theta / self.N).sqrt_() - invg**2 * module.z_u * module.r_b)
                 elif self.version == 'accurate':
-                    module.z_w.add_(invg**2 * ((module.r_w**2).sum() / w.numel() - module.eta_u / self.N))
-                    module.z_b.add_(invg**2 * ((module.r_b**2).sum() / b.numel() - module.eta_u / self.N))
-                    module.r_w.add_(invg * (- dw) * module.eta_u + invg * module.n_w.normal_() * (2 * module.c_u * module.eta_u / self.N).sqrt_() - invg**2 * module.z_w * module.r_w)
-                    module.r_b.add_(invg * (- db) * module.eta_u + invg * module.n_b.normal_() * (2 * module.c_u * module.eta_u / self.N).sqrt_() - invg**2 * module.z_b * module.r_b)
+                    module.z_w.add_(invg**2 * ((module.r_w**2).sum() / w.numel() - module.eta_theta / self.N) / module.gamma_theta)
+                    module.z_b.add_(invg**2 * ((module.r_b**2).sum() / b.numel() - module.eta_theta / self.N) / module.gamma_theta)
+                    module.r_w.add_(invg * (- dw) * module.eta_theta + invg * module.n_w.normal_() * (2 * module.c_theta * module.eta_theta / self.N).sqrt_() - invg**2 * module.z_w * module.r_w)
+                    module.r_b.add_(invg * (- db) * module.eta_theta + invg * module.n_b.normal_() * (2 * module.c_theta * module.eta_theta / self.N).sqrt_() - invg**2 * module.z_b * module.r_b)
                 w.add_(module.r_w)
                 b.add_(module.r_b)
             elif self.pattern2.match(name):
@@ -133,20 +135,20 @@ class TACTHMC:
                 whh, dwhh = module.weight_hh_l0.data, module.weight_hh_l0.grad.data
                 bhh, dbhh = module.bias_hh_l0.data, module.bias_hh_l0.grad.data
                 if self.version == 'approx':
-                    module.z_u.add_(invg**2 * (((module.r_wih**2).sum() + (module.r_bih**2).sum() + (module.r_whh**2).sum() + (module.r_bhh**2).sum()) / (wih.numel() + whh.numel() + bih.numel() + bhh.numel()) - module.eta_u / self.N))
-                    module.v_wih.add_(invg * (- dwih) * module.eta_u + invg * module.n_wih.normal_() * (2 * module.c_u * module.eta_u / self.N).sqrt_() - invg**2 * module.z_u * module.r_wih)
-                    module.v_bih.add_(invg * (- dbih) * module.eta_u + invg * module.n_bih.normal_() * (2 * module.c_u * module.eta_u / self.N).sqrt_() - invg**2 * module.z_u * module.r_bih)
-                    module.v_whh.add_(invg * (- dwhh) * module.eta_u + invg * module.n_whh.normal_() * (2 * module.c_u * module.eta_u / self.N).sqrt_() - invg**2 * module.z_u * module.r_whh)
-                    module.v_bhh.add_(invg * (- dbhh) * module.eta_u + invg * module.n_bhh.normal_() * (2 * module.c_u * module.eta_u / self.N).sqrt_() - invg**2 * module.z_u * module.r_bhh)
+                    module.z_u.add_(invg**2 * (((module.r_wih**2).sum() + (module.r_bih**2).sum() + (module.r_whh**2).sum() + (module.r_bhh**2).sum()) / (wih.numel() + whh.numel() + bih.numel() + bhh.numel()) - module.eta_theta / self.N) / module.gamma_theta)
+                    module.v_wih.add_(invg * (- dwih) * module.eta_theta + invg * module.n_wih.normal_() * (2 * module.c_theta * module.eta_theta / self.N).sqrt_() - invg**2 * module.z_u * module.r_wih)
+                    module.v_bih.add_(invg * (- dbih) * module.eta_theta + invg * module.n_bih.normal_() * (2 * module.c_theta * module.eta_theta / self.N).sqrt_() - invg**2 * module.z_u * module.r_bih)
+                    module.v_whh.add_(invg * (- dwhh) * module.eta_theta + invg * module.n_whh.normal_() * (2 * module.c_theta * module.eta_theta / self.N).sqrt_() - invg**2 * module.z_u * module.r_whh)
+                    module.v_bhh.add_(invg * (- dbhh) * module.eta_theta + invg * module.n_bhh.normal_() * (2 * module.c_theta * module.eta_theta / self.N).sqrt_() - invg**2 * module.z_u * module.r_bhh)
                 elif self.version == 'accurate':
-                    module.z_wih.add_(invg**2 * ((module.r_wih**2).sum() / wih.numel() - module.eta_u / self.N))
-                    module.z_bih.add_(invg**2 * ((module.r_bih**2).sum() / bih.numel() - module.eta_u / self.N))
-                    module.z_whh.add_(invg**2 * ((module.r_whh**2).sum() / whh.numel() - module.eta_u / self.N))
-                    module.z_bhh.add_(invg**2 * ((module.r_bhh**2).sum() / bhh.numel() - module.eta_u / self.N))
-                    module.r_wih.add_(invg * (- dwih) * module.eta_u + invg * module.n_wih.normal_() * (2 * module.c_u * module.eta_u / self.N).sqrt_() - invg**2 * module.z_wih * module.r_wih)
-                    module.r_bih.add_(invg * (- dbih) * module.eta_u + invg * module.n_bih.normal_() * (2 * module.c_u * module.eta_u / self.N).sqrt_() - invg**2 * module.z_bih * module.r_bih)
-                    module.r_whh.add_(invg * (- dwhh) * module.eta_u + invg * module.n_whh.normal_() * (2 * module.c_u * module.eta_u / self.N).sqrt_() - invg**2 * module.z_whh * module.r_whh)
-                    module.r_bhh.add_(invg * (- dbhh) * module.eta_u + invg * module.n_bhh.normal_() * (2 * module.c_u * module.eta_u / self.N).sqrt_() - invg**2 * module.z_bhh * module.r_bhh)
+                    module.z_wih.add_(invg**2 * ((module.r_wih**2).sum() / wih.numel() - module.eta_theta / self.N) / module.gamma_theta)
+                    module.z_bih.add_(invg**2 * ((module.r_bih**2).sum() / bih.numel() - module.eta_theta / self.N) / module.gamma_theta)
+                    module.z_whh.add_(invg**2 * ((module.r_whh**2).sum() / whh.numel() - module.eta_theta / self.N) / module.gamma_theta)
+                    module.z_bhh.add_(invg**2 * ((module.r_bhh**2).sum() / bhh.numel() - module.eta_theta / self.N) / module.gamma_theta)
+                    module.r_wih.add_(invg * (- dwih) * module.eta_theta + invg * module.n_wih.normal_() * (2 * module.c_theta * module.eta_theta / self.N).sqrt_() - invg**2 * module.z_wih * module.r_wih)
+                    module.r_bih.add_(invg * (- dbih) * module.eta_theta + invg * module.n_bih.normal_() * (2 * module.c_theta * module.eta_theta / self.N).sqrt_() - invg**2 * module.z_bih * module.r_bih)
+                    module.r_whh.add_(invg * (- dwhh) * module.eta_theta + invg * module.n_whh.normal_() * (2 * module.c_theta * module.eta_theta / self.N).sqrt_() - invg**2 * module.z_whh * module.r_whh)
+                    module.r_bhh.add_(invg * (- dbhh) * module.eta_theta + invg * module.n_bhh.normal_() * (2 * module.c_theta * module.eta_theta / self.N).sqrt_() - invg**2 * module.z_bhh * module.r_bhh)
                 wih.add_(module.r_wih)
                 bih.add_(module.r_bih)
                 whh.add_(module.r_whh)
@@ -158,15 +160,14 @@ class TACTHMC:
     def resample_momenta(self):
         for name, module in self.model._modules.items():
             if self.pattern1.match(name):
-                module.r_w.normal_().mul_((module.eta_u / self.N).sqrt_())
-                module.r_b.normal_().mul_((module.eta_u / self.N).sqrt_())
+                module.r_w.normal_().mul_((module.eta_theta / self.N).sqrt_())
+                module.r_b.normal_().mul_((module.eta_theta / self.N).sqrt_())
             elif self.pattern2.match(name):
-                module.r_wih.normal_().mul_((module.eta_u / self.N).sqrt_())
-                module.r_bih.normal_().mul_((module.eta_u / self.N).sqrt_())
-                module.r_whh.normal_().mul_((module.eta_u / self.N).sqrt_())
-                module.r_bhh.normal_().mul_((module.eta_u / self.N).sqrt_())
+                module.r_wih.normal_().mul_((module.eta_theta / self.N).sqrt_())
+                module.r_bih.normal_().mul_((module.eta_theta / self.N).sqrt_())
+                module.r_whh.normal_().mul_((module.eta_theta / self.N).sqrt_())
+                module.r_bhh.normal_().mul_((module.eta_theta / self.N).sqrt_())
 
-    # the function of tempering variables, g=lambda(xi)
     def g_fn(self, z):
         n = 3
         (z0, y0) = (self.smooth_area, 1)
@@ -217,54 +218,39 @@ class ABF:
             self.memory = torch.load(filename, map_location=lambda storage, loc: storage)
             print ('Successfully Loaded ABF!')
 
-    def saver(self, nIter, path):
-        torch.save(self.memory, path+'abf_'+str(nIter)+'.pt')
+    def saver(self, path):
+        torch.save(self.memory, path+'abf.pt')
         print ('Successfully Saved ABF!')
 
 
 class Metadynamics:
 
     def __init__(self, zlower=-1., zupper=1., dz=1e-3, gaussian_decay=1e-6, enable_cuda=False):
-        # the maximal xi
         self.zlower = float(zlower)
-        # the minimal xi
         self.zupper = float(zupper)
-        # the diff of every two xi
         self.dz = float(dz)
-        # compute the number of xi
         self.nbins = int(np.ceil((self.zupper - self.zlower) / self.dz))
-        # center of each hole of xi
         self.cbins = self.zlower + torch.arange(self.nbins) * self.dz + 0.5 * self.dz
         if enable_cuda:
             self.cbins = self.cbins.cuda()
-        # memory[0] = counter
-        # memory[1] = stack of decayed gaussian
         self.memory = torch.zeros((2, self.nbins))
         if enable_cuda:
             self.memory = self.memory.cuda()
-        # define sigma
         self.sigma = float(dz)
-        # height of the decayed guassian
         self.gaussian_decay = gaussian_decay
-        # the end index
         self.nbins_end = self.nbins - 1
 
     def decayed_gaussian(self, xi, mean):
         return self.gaussian_decay * torch.exp(- 1.0 / (2 * self.sigma**2) * (xi - mean)**2)
 
     def update(self, xi):
-        # zcurr=curr xi
         idx = int((xi - self.zlower) / self.dz)
         if 0 <= idx < self.nbins:
-            # stack of decayed gaussian of index
             self.memory[1][idx] += self.decayed_gaussian(self.cbins[idx], self.cbins[idx]).item()
-            # counter
             self.memory[0][idx] += 1
-            # the flip index of idx
             _idx = self.nbins_end - idx
             if not (idx == int(self.nbins_end / 2)):
                 self.memory[1][_idx] +=  self.decayed_gaussian(self.cbins[_idx], self.cbins[_idx]).item()
-            # stack of the overlap effect of decayed gaussian
             if idx == 0:
                 self.memory[1][idx + 1] += self.decayed_gaussian(self.cbins[idx + 1], self.cbins[idx]).item()
                 self.memory[1][_idx - 1] += self.decayed_gaussian(self.cbins[_idx - 1], self.cbins[_idx]).item()
@@ -289,15 +275,13 @@ class Metadynamics:
             self.memory = torch.load(filename, map_location=lambda storage, loc: storage)
             print ('Successfully Loaded Metadynamics!')
 
-    def saver(self, nIter, path):
-        torch.save(self.memory, path+'matadynamics_'+str(nIter)+'.pt')
+    def saver(self, path):
+        torch.save(self.memory, path+'matadynamics.pt')
         print ('Successfully Saved Metadynamics!')
 
     def estimate_force(self, xi):
-        # to determine the index of the curr xi
         idx  = int((xi - self.zlower) / self.dz)
         self.idx = idx
-        # compute the force at the index
         if 0 <= idx < self.nbins / 2.0:
             diff = self.memory[1][idx + 1] - self.memory[1][idx]
         else:

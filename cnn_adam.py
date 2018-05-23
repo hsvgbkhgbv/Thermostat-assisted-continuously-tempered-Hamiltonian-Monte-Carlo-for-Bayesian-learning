@@ -21,7 +21,7 @@ parser.add_argument('--test-batch-size', type=int, default=10000)
 parser.add_argument('--num-epochs', type=int, default=1000)
 parser.add_argument('--evaluation-interval', type=int, default=50)
 parser.add_argument('--prior-precision', type=float, default=1e-3)
-parser.add_argument('--random-selection-percentage', type=float, default=0.2)
+parser.add_argument('--permutation', type=float, default=0.2)
 parser.add_argument('--enable-cuda', action='store_true')
 parser.add_argument('--device-num', type=int, default=2)
 args = parser.parse_args()
@@ -73,9 +73,9 @@ if __name__ == '__main__':
         print ("#######################################################################################")
         for i, (x, y) in enumerate(train_loader):
             batch_size = x.data.size(0)
-            if args.random_selection_percentage > 0.0:
+            if args.permutation > 0.0:
                 y = y.clone()
-                y.data[:int(args.random_selection_percentage*batch_size)] = torch.LongTensor(np.random.choice(num_labels, int(args.random_selection_percentage*batch_size)))
+                y.data[:int(args.permutation*batch_size)] = torch.LongTensor(np.random.choice(num_labels, int(args.permutation*batch_size)))
             if cuda_availability:
                 x, y = x.cuda(), y.cuda()
             model.zero_grad()

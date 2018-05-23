@@ -8,7 +8,6 @@ from torchvision import datasets, transforms
 import time
 import argparse
 import numpy as np
-import math
 from tacthmc import *
 from evaluation import *
 import os
@@ -16,26 +15,27 @@ from model_zoo import *
 
 
 '''set up hyperparameters of the experiments'''
-parser = argparse.ArgumentParser(description='tacthmc on CNN tested on CIFAR10 appending noise')
+parser = argparse.ArgumentParser(description='tacthmc on LSTM tested on Fashion MNIST appending noise')
 parser.add_argument('--train-batch-size', type=int, default=64)
 parser.add_argument('--test-batch-size', type=int, default=10000)
 parser.add_argument('--num-burn-in', type=int, default=30000)
 parser.add_argument('--num-epochs', type=int, default=2000)
 parser.add_argument('--evaluation-interval', type=int, default=50)
-parser.add_argument('--eta-u', type=float, default=1.7e-8)
+parser.add_argument('--eta-theta', type=float, default=1.7e-8)
 parser.add_argument('--eta-xi', type=float, default=1.7e-10)
-parser.add_argument('--c-u', type=float, default=0.1)
+parser.add_argument('--c-theta', type=float, default=0.1)
 parser.add_argument('--c-xi', type=float, default=0.1)
+parser.add_argument('--gamma-theta', type=float, default=1)
 parser.add_argument('--gamma-xi', type=float, default=1)
 parser.add_argument('--prior-precision', type=float, default=1e-3)
-parser.add_argument('--random-selection-percentage', type=float, default=0.2)
+parser.add_argument('--permutation', type=float, default=0.3)
 parser.add_argument('--enable-cuda', action='store_true')
-parser.add_argument('--device-num', type=int, default=4)
-parser.add_argument('--experiments-num', type=int, default=1)
+parser.add_argument('--device-num', type=int, default=7)
 parser.add_argument('--tempering-model-type', type=int, default=1)
 parser.add_argument('--load-tempering-model', action='store_true')
 parser.add_argument('--tempering-model-filename', type=int)
-parser.add_argument('--saving-tempering-model', action='store_true')
+parser.add_argument('--save-tempering-model', action='store_true')
+parser.add_argument('--tempering-model-path')
 args = parser.parse_args()
 print (args)
 
@@ -46,7 +46,7 @@ if torch.cuda.is_available():
 
 '''load dataset'''
 train_loader = torch.utils.data.DataLoader(
-    datasets.CIFAR10('./cifar10-dataset', train=True, download=True,
+    datasets.FashionMNIST('./fashion-dataset', train=True, download=True,
                    transform=transforms.Compose([
                        transforms.ToTensor(),
                        transforms.Normalize((0.1307,), (0.3081,))
@@ -54,7 +54,7 @@ train_loader = torch.utils.data.DataLoader(
     batch_size=args.train_batch_size, shuffle=True, drop_last=True)
 
 test_loader = torch.utils.data.DataLoader(
-    datasets.CIFAR10('./cifar10-dataset', train=False,
+    datasets.FashionMNIST('./fashion-dataset', train=False,
                    transform=transforms.Compose([
                        transforms.ToTensor(),
                        transforms.Normalize((0.1307,), (0.3081,))
@@ -64,7 +64,7 @@ test_loader = torch.utils.data.DataLoader(
 
 if __name__ == '__main__':
 
-    model = CNN()
+    model = LSTM()
     cuda_availability = args.enable_cuda and torch.cuda.is_available()
     N = len(train_loader.dataset)
     num_labels = model.outputdim
@@ -72,7 +72,7 @@ if __name__ == '__main__':
         temper_model_name = 'Metadynamics'
     elif args.tempering_model_type == 2:
         temper_model_name = 'ABF'
-    sampler = TACTHMC(model, N, args.eta_u, args.eta_xi, args.c_u, args.c_xi, args.gamma_xi, cuda_availability, temper_model=temper_model_name)
+    sampler = TACTHMC(model, N, args.eta_theta, args.eta_xi, args.c_theta, args.c_xi, args.gamma_theta, args.gamma_xi, cuda_availability, temper_model=temper_model_name)
     if cuda_availability:
         model.cuda()
     sampler.resample_momenta()
@@ -84,15 +84,17 @@ if __name__ == '__main__':
                                test_loader,\
                                cuda_availability)
     acc = 0
-    path = './cnn_'+temper_model_name+'_'+str(args.experiments_num)+'/'
-    if args.saving_tempering_model:
+    path = args.tempering_model_path
+    if path[-1] != '/':
+        path = path+'/'
+    if args.save_tempering_model:
         try:
             os.mkdir(path)
         except:
-            pass
+            print ('There exists a folder!')
     if args.load_tempering_model:
         try:
-            sampler.temper_model.loader(path+temper_model_name+'_'+str(args.tempering_model_filename)+'.pt', args.enable_cuda)
+            sampler.temper_model.loader(path+temper_model_name+'.pt', args.enable_cuda)
         except:
             print ('No saved model is found!')
 
@@ -103,13 +105,13 @@ if __name__ == '__main__':
         if epoch%(0.1*args.num_epochs) == 0:
             if temper_model_name == 'Metadynamics':
                 sampler.temper_model.offset()
-            if args.saving_tempering_model:
-                sampler.temper_model.saver(nIter, path)
+            if args.save_tempering_model:
+                sampler.temper_model.saver(path)
         for i, (x, y) in enumerate(train_loader):
             batch_size = x.data.size(0)
-            if args.random_selection_percentage > 0.0:
+            if args.permutation > 0.0:
                 y = y.clone()
-                y.data[:int(args.random_selection_percentage*batch_size)] = torch.LongTensor(np.random.choice(num_labels, int(args.random_selection_percentage*batch_size)))
+                y.data[:int(args.permutation*batch_size)] = torch.LongTensor(np.random.choice(num_labels, int(args.permutation*batch_size)))
             if cuda_availability:
                 x, y = x.cuda(), y.cuda()
             model.zero_grad()
@@ -118,7 +120,7 @@ if __name__ == '__main__':
             for param in model.parameters():
                 loss += args.prior_precision * torch.sum(param**2)
             loss.backward()
-            '''update position and momentum'''
+            '''update params and xi'''
             sampler.update(loss)
             nIter += 1
             if nIter%args.evaluation_interval == 0:
