@@ -212,25 +212,25 @@ sampler = TACTHMC(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_th
 
 ``` model ``` means the model instance constructed by Pytorch, which should be an instance inherited from ``` nn.Module ```
 
-``` N ``` means the size of training dataset, which should be input an int
+``` N ``` means the size of training dataset, which should be an int
 
-``` eta_theta0 ``` means the learning rate of parameters divided by ``` N ```, which should be input a float
+``` eta_theta0 ``` means the learning rate of parameters divided by ``` N ```, which should be a float
 
-``` eta_xi0 ``` means the learning rate of the tempering variable divided by ``` N ```, which should be input a float
+``` eta_xi0 ``` means the learning rate of the tempering variable divided by ``` N ```, which should be a float
 
-``` c_theta0 ``` means the noise level of parameters, which should be input a float
+``` c_theta0 ``` means the noise level of parameters, which should be a float
 
-``` c_xi0 ``` means the noise level of the tempering variable, which should be input a float
+``` c_xi0 ``` means the noise level of the tempering variable, which should be a float
 
-``` gamma_theta0 ``` means the noise level of parameters, which should be input a float
+``` gamma_theta0 ``` means the noise level of parameters, which should be a float
 
-``` gamma_xi0 ``` means the thermal initia of the tempering variable, which should be input a float
+``` gamma_xi0 ``` means the thermal initia of the tempering variable, which should be a float
 
-``` enable_cuda ``` means whether GPU is available, which should be input a boolean
+``` enable_cuda ``` means whether GPU is available, which should be a boolean
 
-``` standard_area ``` means the half range of the standard temperature area, which should be input a float
+``` standard_area ``` means the half range of the standard temperature area, which should be a float
 
-``` gaussian_decay ``` means the decayed height of the stacked Gaussian (which is only feasible when ``` temper_model='Metadynamics' ```), which should be input a float
+``` gaussian_decay ``` means the decayed height of the stacked Gaussian (which is only feasible when ``` temper_model='Metadynamics' ```), which should be a float
 
 ``` version ``` means how to assign thermostats to parameters, which can be selected from either ``` 'accurate' ``` or ``` 'approximate' ```
 
@@ -245,7 +245,7 @@ estimator = FullyBayesian((len(test_loader.dataset), num_labels),\
                            cuda_availability)
 ```
 
-``` test_loader ``` means the data loader, which should be the instance of ``` torch.utils.data.DataLoader ```
+``` test_loader ``` means the data loader, which should be an instance of ``` torch.utils.data.DataLoader ```
 
 ``` num_labels ``` means the number of labels of dataset, which should be an int
 
@@ -275,7 +275,7 @@ if abs(sampler.model.xi.item()) <= 0.85*sampler.smooth_area and nIter >= num_bur
     acc = estimator.evaluation()
 ```
 
-``` num_burn_in ``` means the iterations of waiting for convergence of the algorithm, which shoud be int
+``` num_burn_in ``` means the iterations of waiting for convergence of the algorithm, which shoud be an int
 
 7. Go back to step 4
 
