@@ -92,6 +92,18 @@ eval = \int_{\theta} P(D_{test}| \theta) P(\theta | D_{train}) \ d\theta
 $$
 
 
+### Experimental Results
+
+#### MLP on EMNIST
+
+% permuted labels | 0%         | 20%        | 30%
+----------------- | ---------- | ---------- | ----------
+Adam              | 83.39%     | 80.27%     | 80.63%
+SGD               | 83.95%     | 82.64%     | 81.70%
+SGHMC             | 84.53%     | 82.62%     | 81.56%
+SGNHT             | 84.48%     | 82.63%     | 81.60%
+----------------- | ---------- | ---------- | ----------
+TACTHMC           | **84.85%** | **82.95%** | **81.77%**
 ## Run Preliminary Experiments
 
 ### Our Methods (TACTHMC)
