@@ -239,10 +239,7 @@ sampler = TACTHMC(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_th
 2. Initialize an estimator such as
 
 ```bash
-estimator = FullyBayesian((len(test_loader.dataset), num_labels),\
-                           model,\
-                           test_loader,\
-                           cuda_availability)
+estimator = FullyBayesian((len(test_loader.dataset), num_labels), model, test_loader, cuda_availability)
 ```
 
 ``` test_loader ``` means the data loader, which should be an instance of ``` torch.utils.data.DataLoader ```
