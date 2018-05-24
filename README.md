@@ -275,6 +275,7 @@ if abs(sampler.model.xi.item()) <= 0.85*sampler.smooth_area and nIter >= num_bur
     acc = estimator.evaluation()
 ```
 
+``` nIter ``` means the current iteration number, which should be an int
 ``` num_burn_in ``` means the iterations of waiting for convergence of the algorithm, which shoud be an int
 
 7. Go back to step 4
