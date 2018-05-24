@@ -46,7 +46,7 @@ In experiments, we assign random labels to 0%, 20% and 30% of each batch of trai
                 ->10        
 - dataset: CIFAR-10
 - train_data_size: 60000
-- test_data_size:10000
+- test_data_size: 10000
 - categories: 10
 - batch_size: 64
 
@@ -63,7 +63,7 @@ In experiments, we assign random labels to 0%, 20% and 30% of each batch of trai
                 ->10           
 - dataset: Fashion-MNIST
 - train_data_size: 60000
-- test_data_size:10000
+- test_data_size: 10000
 - categories: 10
 - batch_size: 64
 
