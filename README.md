@@ -250,7 +250,7 @@ sampler.update(loss)
 
 ``` loss ``` can be the output from any loss function in Pytorch
 
-4. Periodically Resample the the momenta of parameters such as
+4. Periodically resample the the momenta of parameters such as
 
 ```bash
 sampler.resample_momenta()
