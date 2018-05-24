@@ -207,7 +207,7 @@ Here, the tempering model is to handle the unexpected noise for the tempering va
 
 1. Initialize an instance of the object TACTHMC such as
 ```bash
-sampler = TACTHMC(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_theta0, gamma_xi0, enable_cuda, smooth_area=0.1, gaussian_decay=1e-3, version='accurate', temper_model='Metadynamics')
+sampler = TACTHMC(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_theta0, gamma_xi0, enable_cuda, standard_area=0.1, gaussian_decay=1e-3, version='accurate', temper_model='Metadynamics')
 ```
 
 ``` model ``` means the model instance constructed by Pytorch, which should be an instance inherited from ``` nn.Module ```
@@ -228,7 +228,7 @@ sampler = TACTHMC(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_th
 
 ``` enable_cuda ``` means whether GPU is available, which should be input a boolean
 
-``` smooth_area ``` means the half range of the standard temperature area, which should be input a float
+``` standard_area ``` means the half range of the standard temperature area, which should be input a float
 
 ``` gaussian_decay ``` means the decayed height of the stacked Gaussian (which is only feasible when ``` temper_model='Metadynamics' ```), which should be input a float
 
@@ -240,9 +240,9 @@ sampler = TACTHMC(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_th
 
 ```bash
 estimator = FullyBayesian((len(test_loader.dataset), num_labels),\
-                               model,\
-                               test_loader,\
-                               cuda_availability)
+                           model,\
+                           test_loader,\
+                           cuda_availability)
 ```
 
 ``` test_loader ``` means the data loader, which should be the instance of ``` torch.utils.data.DataLoader ```
@@ -272,7 +272,7 @@ sampler.update(loss)
 ```bash
 sampler.resample_momenta()
 if abs(sampler.model.xi.item()) <= 0.85*sampler.smooth_area and nIter >= num_burn_in:
-  acc = estimator.evaluation()
+    acc = estimator.evaluation()
 ```
 
 ``` num_burn_in ``` means the iterations of waiting for convergence of the algorithm, which shoud be int
