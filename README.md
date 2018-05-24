@@ -20,7 +20,6 @@ The task of MLP is on EMNIST. The task of CNN is on CIFAR-10. The task of RNN is
 
 In experiments, we assign random labels to 0%, 20% and 30% of each batch of training data respectively so as to constitute a noisy training environment.
 
-
 ### MLP
 
 - architecture: 784->linear->ReLU->100->linear->ReLU->47
@@ -103,6 +102,28 @@ SGD               | 83.95%     | 82.64%     | 81.70%
 SGHMC             | 84.53%     | 82.62%     | 81.56%
 SGNHT             | 84.48%     | 82.63%     | 81.60%
 TACTHMC           | **84.85%** | **82.95%** | **81.77%**
+
+#### CNN on CIFAR-10
+
+% permuted labels | 0%         | 20%        | 30%
+----------------- | ---------- | ---------- | ----------
+Adam              | 69.53%     | 72.39%     | 71.05%
+SGD               | 64.25%     | 65.09%     | 67.70%
+SGHMC             | 76.44%     | 73.87%     | 71.79%
+SGNHT             | 76.60%     | 73.86%     | 71.37%
+TACTHMC           | **78.93%** | **74.88%** | **73.22%**
+
+#### RNN on Fashion-MNIST
+
+% permuted labels | 0%         | 20%        | 30%
+----------------- | ---------- | ---------- | ----------
+Adam              | 88.84%     | 88.35%     | 88.25%
+SGD               | 88.66%     | 88.91%     | 88.34%
+SGHMC             | 90.25%     | 88.98%     | 88.49%
+SGNHT             | 90.18%     | 89.10%     | 88.58%
+TACTHMC           | **90.84%** | **89.61%** | **89.01%**
+
+
 ## Run Preliminary Experiments
 
 ### Our Methods (TACTHMC)
