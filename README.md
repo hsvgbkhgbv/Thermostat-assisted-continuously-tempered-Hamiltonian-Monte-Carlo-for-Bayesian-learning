@@ -68,7 +68,7 @@ In experiments, we assign random labels to 0%, 20% and 30% of each batch of trai
 - batch_size: 64
 
 
-### Evaluation Method
+### Evaluation Methods
 
 For the conventional optimization algorithms such as Adam and SGD, we use the point estimate to evaluate the performance.
 
@@ -126,7 +126,7 @@ TACTHMC           | **90.84%** | **89.61%** | **89.01%**
 
 ## Run Preliminary Experiments
 
-### Our Methods (TACTHMC)
+### Our Method (TACTHMC)
 ```bash
 python cnn_tacthmc.py --permutation 0.2 --c-theta 0.1
 python mlp_tacthmc.py --permutation 0.2 --c-theta 0.05
