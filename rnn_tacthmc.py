@@ -134,7 +134,7 @@ if __name__ == '__main__':
                                                                                                                                                          sampler.get_z_u(),\
                                                                                                                                                          sampler.get_z_xi(),\
                                                                                                                                                          time.time() - tStart))
-                if abs(sampler.model.xi.item()) <= 0.85*sampler.standard_area and nIter >= args.num_burn_in:
+                if abs(sampler.model.xi.item()) <= 0.85*sampler.standard_interval and nIter >= args.num_burn_in:
                     acc = estimator.evaluation()
                 print ('This is the accuracy: %{:6.2f}'.format(acc))
                 sampler.resample_momenta()

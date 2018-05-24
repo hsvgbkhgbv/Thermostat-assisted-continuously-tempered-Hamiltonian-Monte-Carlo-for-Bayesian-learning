@@ -5,7 +5,7 @@ import re
 
 class TACTHMC:
 
-    def __init__(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_theta0, gamma_xi0, enable_cuda, standard_area=0.1, gaussian_decay=1e-3, version='accurate', temper_model='Metadynamics'):
+    def __init__(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_theta0, gamma_xi0, enable_cuda, standard_interval=0.1, gaussian_decay=1e-3, version='accurate', temper_model='Metadynamics'):
         self.N = N
         self.model = model
         self.version = version
@@ -18,7 +18,7 @@ class TACTHMC:
         self.model.register_buffer('c_xi', torch.Tensor([c_xi0]))
         self.model.register_buffer('z_xi', model.c_xi)
         self.model.register_buffer('n_xi', torch.zeros(1))
-        self.standard_area = standard_area
+        self.standard_interval = standard_interval
         self.temper_model_name = temper_model
         if self.temper_model_name == 'Metadynamics':
             self.temper_model = Metadynamics(gaussian_decay=gaussian_decay, enable_cuda=enable_cuda)
@@ -170,7 +170,7 @@ class TACTHMC:
 
     def g_fn(self, z):
         n = 3
-        (z0, y0) = (self.standard_area, 1)
+        (z0, y0) = (self.standard_interval, 1)
         (z1, y1) = (1.0, 6)
         a  = (y1 - y0) / (z1 - z0)**n
         u  = torch.abs(z) - z0
