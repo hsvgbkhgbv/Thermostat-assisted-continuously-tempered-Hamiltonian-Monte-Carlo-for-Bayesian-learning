@@ -16,10 +16,9 @@ Now, all of dependencies are ready and you can start running the codes.
 
 We have done three experiments based on MLP, CNN and RNN. All of tasks are classifications.
 
-The task of MLP is on EMNIST. The task of CNN is on CIFAR-10. The task of LSTM is on Fashion-MNIST.
+The task of MLP is on EMNIST. The task of CNN is on CIFAR-10. The task of RNN is on Fashion-MNIST.
 
 In experiments, we assign random labels to 0%, 20% and 30% of each batch of training data respectively so as to constitute a noisy training environment.
-
 
 ### MLP
 
@@ -39,13 +38,15 @@ In experiments, we assign random labels to 0%, 20% and 30% of each batch of trai
                 ->ReLU
                 ->MaxPooling2D(kernel=2x2, stride=2x2)
                 ->Flatten
-                ->linear->ReLU
+                ->linear
+                ->ReLU
                 ->100
-                ->linear->ReLU
+                ->linear
+                ->ReLU
                 ->10        
 - dataset: CIFAR-10
 - train_data_size: 60000
-- test_data_size:10000
+- test_data_size: 10000
 - categories: 10
 - batch_size: 64
 
@@ -62,12 +63,12 @@ In experiments, we assign random labels to 0%, 20% and 30% of each batch of trai
                 ->10           
 - dataset: Fashion-MNIST
 - train_data_size: 60000
-- test_data_size:10000
+- test_data_size: 10000
 - categories: 10
 - batch_size: 64
 
 
-### Evaluation Method
+### Evaluation Methods
 
 For the conventional optimization algorithms such as Adam and SGD, we use the point estimate to evaluate the performance.
 
@@ -82,7 +83,7 @@ $$
 For the sampling algorithms such as SGHMC, SGNHT and TACTHMC, we use the fully bayesian to evaluate the performance.
 
 $$
-P(\theta | D_{train}) = \frac{P(D_{train}, \theta)}{\log Z(\theta)}
+P(\theta | D_{train}) = \frac{P(D_{train}, \theta)}{P(\theta)}
 $$
 
 $$
@@ -90,43 +91,76 @@ eval = \int_{\theta} P(D_{test}| \theta) P(\theta | D_{train}) \ d\theta
 $$
 
 
+### Experimental Results
+
+#### MLP on EMNIST
+
+% permuted labels | 0%         | 20%        | 30%
+----------------- | ---------- | ---------- | ----------
+Adam              | 83.39%     | 80.27%     | 80.63%
+SGD               | 83.95%     | 82.64%     | 81.70%
+SGHMC             | 84.53%     | 82.62%     | 81.56%
+SGNHT             | 84.48%     | 82.63%     | 81.60%
+TACTHMC           | **84.85%** | **82.95%** | **81.77%**
+
+#### CNN on CIFAR-10
+
+% permuted labels | 0%         | 20%        | 30%
+----------------- | ---------- | ---------- | ----------
+Adam              | 69.53%     | 72.39%     | 71.05%
+SGD               | 64.25%     | 65.09%     | 67.70%
+SGHMC             | 76.44%     | 73.87%     | 71.79%
+SGNHT             | 76.60%     | 73.86%     | 71.37%
+TACTHMC           | **78.93%** | **74.88%** | **73.22%**
+
+#### RNN on Fashion-MNIST
+
+% permuted labels | 0%         | 20%        | 30%
+----------------- | ---------- | ---------- | ----------
+Adam              | 88.84%     | 88.35%     | 88.25%
+SGD               | 88.66%     | 88.91%     | 88.34%
+SGHMC             | 90.25%     | 88.98%     | 88.49%
+SGNHT             | 90.18%     | 89.10%     | 88.58%
+TACTHMC           | **90.84%** | **89.61%** | **89.01%**
+
+
 ## Run Preliminary Experiments
 
-### Our Methods (TACTHMC)
+### Our Method (TACTHMC)
 ```bash
-python cnn_tacthmc_append_noise.py --random-selection-percentage 0.2
-python mlp_tacthmc_append_noise.py --random-selection-percentage 0.2
-python rnn_tacthmc_append_noise.py --random-selection-percentage 0.2
+python cnn_tacthmc.py --permutation 0.2 --c-theta 0.1
+python mlp_tacthmc.py --permutation 0.2 --c-theta 0.05
+python rnn_tacthmc.py --permutation 0.2 --c-theta 0.15
 ```
 
 ### Baseline
 
 **SGD with Momentum**
 ```bash
-python cnn_sgd_append_noise.py --random-selection-percentage 0.2
-python mlp_sgd_append_noise.py --random-selection-percentage 0.2
-python rnn_sgd_append_noise.py --random-selection-percentage 0.2
+python cnn_sgd.py --permutation 0.2
+python mlp_sgd.py --permutation 0.2
+python rnn_sgd.py --permutation 0.2
 ```
 
 **Adam**
 ```bash
-python cnn_adam_append_noise.py --random-selection-percentage 0.2
-python mlp_adam_append_noise.py --random-selection-percentage 0.2
-python rnn_adam_append_noise.py --random-selection-percentage 0.2
+python cnn_adam.py --permutation 0.2
+python mlp_adam.py --permutation 0.2
+python rnn_adam.py --permutation 0.2
 ```
 
 **SGHMC**
 ```bash
-python cnn_sghmc_append_noise.py --random-selection-percentage 0.2
-python mlp_sghmc_append_noise.py --random-selection-percentage 0.2
-python rnn_sghmc_append_noise.py --random-selection-percentage 0.2
+python cnn_sghmc.py --permutation 0.2 --c-theta 0.1
+python mlp_sghmc.py --permutation 0.2 --c-theta 0.1
+python rnn_sghmc.py --permutation 0.2 --c-theta 0.1
 ```
 
 **SGNHT**
 ```bash
-python cnn_sgnht_append_noise.py --random-selection-percentage 0.2
-python mlp_sgnht_append_noise.py --random-selection-percentage 0.2
-python rnn_sgnht_append_noise.py --random-selection-percentage 0.2
+python cnn_sgnht.py --permutation 0.2 --c-theta 0.1
+python mlp_sgnht.py --permutation 0.2 --c-theta 0.1
+python rnn_sgnht.py --permutation 0.2 --c-theta 0.1
 ```
 
 In these experiments, we implement SGNHT and SGHMC, as well as invoke SGD and Adam from Pytorch directly.
@@ -134,6 +168,11 @@ In these experiments, we implement SGNHT and SGHMC, as well as invoke SGD and Ad
 The reference for SGHMC is: https://arxiv.org/pdf/1402.4102.pdf
 
 The reference for SGNHT is: http://people.ee.duke.edu/~lcarin/sgnht-4.pdf
+
+The reference for SGD is: http://leon.bottou.org/publications/pdf/compstat-2010.pdf
+
+The reference for Adam is: https://arxiv.org/pdf/1412.6980.pdf
+
 
 ### Some Advanced Settings
 ```bash
@@ -143,20 +182,20 @@ The reference for SGNHT is: http://people.ee.duke.edu/~lcarin/sgnht-4.pdf
 --num-burn-in NUM_BURN_IN                                  # set up the number of iterations of burn-in (int)
 --num-epochs NUM_EPOCHS                                    # set up the total number of epochs for training (int)
 --evaluation-interval EVALUATION_INTERVAL                  # set up the interval of evaluation (int)
---eta-u ETA_U                                              # set up the learning rate of parameters, which should be divided by the size of the whole training dataset (float)
+--eta-theta ETA_THETA                                      # set up the learning rate of parameters, which should be divided by the size of the whole training dataset (float)
 --eta-xi ETA_XI                                            # set up the learning rate of the tempering variable which is similar to that of parameters (float)
---c-u C_U                                                  # set up the noise level of parameters (float)
+--c-theta C_THETA                                          # set up the noise level of parameters (float)
 --c-xi C_XI                                                # set up the noise level of the tempering variable (float)
---gamma-xi GAMMA_XI                                        # set up the value of thermal initia (float)
---prior-precision PRIOR_PRECISION                          # set up the penalizer of L2-norm (float)
---random-selection-percentage RANDOM_SELECTION_PERCENTAGE  # set up the percentage of random assignment on labels (float)
+--gamma-theta GAMMA_THETA                                  # set up the value of the thermal initia of parameters (float)
+--gamma-xi GAMMA_XI                                        # set up the value of the thermal initia of the tempering variable (float)
+--prior-precision PRIOR_PRECISION                          # set up the penalty parameter of L2-Regularizer (float)
+--permutation PERMUTATION                                  # set up the percentage of random assignments on labels (float)
 --enable-cuda                                              # use cuda if available (action=true)
 --device-num DEVICE_NUM                                    # select an appropriate GPU for usage (int)
---experiments-num EXPERIMENTS_NUM                          # set up the label for the experiment (int)
 --tempering-model-type TEMPERING_MODEL_TYPE                # set up the model type for the tempering variable (1 for Metadynamics/2 for ABF) (int)
 --load-tempering-model                                     # set up whether necessarily load pre-trained tempering model (action=true)
---tempering-model-filename TEMPERING_MODEL_FILENAME        # set up the tempering model filename (int)
---saving-tempering-model                                   # set up whether it is necessary to save the tempering model   
+--save-tempering-model                                     # set up whether it is necessary to save the tempering model (bool)
+--tempering-model-path TEMPERING_MODEL_PATH                # set up the path for saving or loading the tempering model (str)
 ```
 
 Here, the tempering model is to handle the unexpected noise for the tempering variable occuring during the dynamics.
@@ -168,26 +207,28 @@ Here, the tempering model is to handle the unexpected noise for the tempering va
 
 1. Initialize an instance of the object TACTHMC such as
 ```bash
-sampler = TACTHMC(model, N, eta_u0, eta_xi0, c_u0, c_xi0, gamma_xi0, enable_cuda, smooth_area=0.1, gaussian_decay=1e-3, version='accurate', temper_model='Metadynamics')
+sampler = TACTHMC(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_theta0, gamma_xi0, enable_cuda, smooth_area=0.1, gaussian_decay=1e-3, version='accurate', temper_model='Metadynamics')
 ```
 
 ``` model ``` means the model instance constructed by Pytorch, which should be an instance inherited from ``` nn.Module ```
 
 ``` N ``` means the size of training dataset, which should be input an int
 
-``` eta_u0 ``` means the learning rate of parameters divided by ``` N ```, which should be input a float
+``` eta_theta0 ``` means the learning rate of parameters divided by ``` N ```, which should be input a float
 
 ``` eta_xi0 ``` means the learning rate of the tempering variable divided by ``` N ```, which should be input a float
 
-``` c_u0 ``` means the noise level of parameters, which should be input a float
+``` c_theta0 ``` means the noise level of parameters, which should be input a float
 
 ``` c_xi0 ``` means the noise level of the tempering variable, which should be input a float
+
+``` gamma_theta0 ``` means the noise level of parameters, which should be input a float
 
 ``` gamma_xi0 ``` means the thermal initia of the tempering variable, which should be input a float
 
 ``` enable_cuda ``` means whether GPU is available, which should be input a boolean
 
-``` smooth_area ``` means the smooth area of the confined potential for the tempering variable, which should be input a float
+``` smooth_area ``` means the half range of the standard temperature area, which should be input a float
 
 ``` gaussian_decay ``` means the decayed height of the stacked Gaussian (which is only feasible when ``` temper_model='Metadynamics' ```), which should be input a float
 
@@ -195,32 +236,53 @@ sampler = TACTHMC(model, N, eta_u0, eta_xi0, c_u0, c_xi0, gamma_xi0, enable_cuda
 
 ``` temper_model ``` means which model is selected as the tempering variable model, which can be selectd between ``` 'Metadynamics' ``` and ``` 'ABF' ```
 
-2. Initialize the momenta of parameters such as
+2. Initialize an estimator such as
+
+```bash
+estimator = FullyBayesian((len(test_loader.dataset), num_labels),\
+                               model,\
+                               test_loader,\
+                               cuda_availability)
+```
+
+``` test_loader ``` means the data loader, which should be the instance of ``` torch.utils.data.DataLoader ```
+
+``` num_labels ``` means the number of labels of dataset, which should be an int
+
+``` cuda_availability ``` means the FLAG to identify whether to use GPU, which should be a boolean
+
+3. Initialize the momenta of parameters such as
 
 ```bash
 sampler.resample_momenta()
 ```
 
-3. Update the parameters and the tempering variable such as
+4. Evaluate with training data and get ``` loss ```
+
+``` loss ``` can be the output from any loss function in Pytorch
+
+5. Update the parameters and the tempering variable such as
 
 ```bash
 sampler.update(loss)
 ```
 
-``` loss ``` can be the output from any loss function in Pytorch
-
-4. Periodically Resample the the momenta of parameters such as
+6. Periodically resample the the momenta of parameters and evaluate with test data such as
 
 ```bash
 sampler.resample_momenta()
+if abs(sampler.model.xi.item()) <= 0.85*sampler.smooth_area and nIter >= num_burn_in:
+  acc = estimator.evaluation()
 ```
 
-5. Go back to step 1
+``` num_burn_in ``` means the iterations of waiting for convergence of the algorithm, which shoud be int
+
+7. Go back to step 4
 
 ### Some Outstanding Utilities
 
 ```bash
-sampler.get_z_u()                                   # get the norm of thermostats of parameters
+sampler.get_z_theta()                               # get the norm of thermostats of parameters
 sampler.get_z_xi()                                  # get the norm of thermostats of the tempering variable
 sampler.get_fU()                                    # get the current force of potential w.r.t the tempering variable
 sampler.temper_model.loader(filename, enable_cuda)  # load the pre-trained tempering model
