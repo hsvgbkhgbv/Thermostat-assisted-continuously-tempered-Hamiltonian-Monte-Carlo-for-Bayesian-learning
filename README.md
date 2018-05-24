@@ -188,7 +188,7 @@ The reference for Adam is: https://arxiv.org/pdf/1412.6980.pdf
 --c-xi C_XI                                                # set up the noise level of the tempering variable (float)
 --gamma-theta GAMMA_THETA                                  # set up the value of the thermal initia of parameters (float)
 --gamma-xi GAMMA_XI                                        # set up the value of the thermal initia of the tempering variable (float)
---prior-precision PRIOR_PRECISION                          # set up the penalty parameter of L2-Regularizer (float)
+--prior-precision PRIOR_PRECISION                          # set up the penalty parameter of L2-Regularizer or the precision of a Gaussian prior from the view of bayesian stats (float)
 --permutation PERMUTATION                                  # set up the percentage of random assignments on labels (float)
 --enable-cuda                                              # use cuda if available (action=true)
 --device-num DEVICE_NUM                                    # select an appropriate GPU for usage (int)
@@ -198,7 +198,7 @@ The reference for Adam is: https://arxiv.org/pdf/1412.6980.pdf
 --tempering-model-path TEMPERING_MODEL_PATH                # set up the path for saving or loading the tempering model (str)
 ```
 
-Here, the tempering model is to handle the unexpected noise for the tempering variable occuring during the dynamics.
+Here the tempering model is to handle the unexpected noise for the tempering variable occuring during the dynamics.
 
 
 ## Invoke API of TACTHMC
@@ -228,7 +228,7 @@ sampler = TACTHMC(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_th
 
 ``` enable_cuda ``` means whether GPU is available, which should be a boolean
 
-``` standard_area ``` means the half range of the standard temperature area, which should be a float
+``` standard_interval ``` means the half range of the interval that the effective system temperature is at unity, which should be a float
 
 ``` gaussian_decay ``` means the decayed height of the stacked Gaussian (which is only feasible when ``` temper_model='Metadynamics' ```), which should be a float
 
