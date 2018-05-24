@@ -84,7 +84,7 @@ $$
 For the sampling algorithms such as SGHMC, SGNHT and TACTHMC, we use the fully bayesian to evaluate the performance.
 
 $$
-P(\theta | D_{train}) = \frac{P(D_{train}, \theta)}{\log Z(\theta)}
+P(\theta | D_{train}) = \frac{P(D_{train}, \theta)}{P(\theta)}
 $$
 
 $$
