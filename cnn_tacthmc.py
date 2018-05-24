@@ -84,19 +84,19 @@ if __name__ == '__main__':
                                test_loader,\
                                cuda_availability)
     acc = 0
-    path = args.tempering_model_path
-    if path[-1] != '/':
-        path = path+'/'
     if args.save_tempering_model:
+        path = args.tempering_model_path
+        if path[-1] != '/':
+            path = path+'/'
         try:
             os.mkdir(path)
         except:
-            print ('There exists a folder!')
+            print ('There exists a folder or no tempering model path is set up!')
     if args.load_tempering_model:
         try:
             sampler.temper_model.loader(path+temper_model_name+'.pt', args.enable_cuda)
         except:
-            print ('No saved model is found!')
+            print ('No saved model or no tempering model path is found!')
 
     for epoch in range(1, 1 + args.num_epochs):
         print ("#######################################################################################")
@@ -106,7 +106,10 @@ if __name__ == '__main__':
             if temper_model_name == 'Metadynamics':
                 sampler.temper_model.offset()
             if args.save_tempering_model:
-                sampler.temper_model.saver(path)
+                try:
+                    sampler.temper_model.saver(path)
+                except:
+                    print ('No tempering model path is set up!')
         for i, (x, y) in enumerate(train_loader):
             batch_size = x.data.size(0)
             if args.permutation > 0.0:
@@ -131,7 +134,7 @@ if __name__ == '__main__':
                                                                                                                                                          sampler.get_z_u(),\
                                                                                                                                                          sampler.get_z_xi(),\
                                                                                                                                                          time.time() - tStart))
-                if abs(sampler.model.xi.item()) <= 0.85*sampler.smooth_area and nIter >= args.num_burn_in:
+                if abs(sampler.model.xi.item()) <= 0.85*sampler.standard_area and nIter >= args.num_burn_in:
                     acc = estimator.evaluation()
                 print ('This is the accuracy: %{:6.2f}'.format(acc))
                 sampler.resample_momenta()
