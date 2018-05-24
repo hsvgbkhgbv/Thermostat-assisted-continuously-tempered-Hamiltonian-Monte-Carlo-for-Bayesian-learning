@@ -236,29 +236,48 @@ sampler = TACTHMC(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_th
 
 ``` temper_model ``` means which model is selected as the tempering variable model, which can be selectd between ``` 'Metadynamics' ``` and ``` 'ABF' ```
 
-2. Initialize the momenta of parameters such as
+2. Initialize an estimator such as
+
+```bash
+estimator = FullyBayesian((len(test_loader.dataset), num_labels),\
+                               model,\
+                               test_loader,\
+                               cuda_availability)
+```
+
+``` test_loader ``` means the data loader, which should be the instance of ``` torch.utils.data.DataLoader ```
+
+``` num_labels ``` means the number of labels of dataset, which should be an int
+
+``` cuda_availability ``` means the FLAG to identify whether to use GPU, which should be a boolean
+
+3. Initialize the momenta of parameters such as
 
 ```bash
 sampler.resample_momenta()
 ```
 
-3. Evaluate with training data and get ``` loss ```
+4. Evaluate with training data and get ``` loss ```
 
 ``` loss ``` can be the output from any loss function in Pytorch
 
-4. Update the parameters and the tempering variable such as
+5. Update the parameters and the tempering variable such as
 
 ```bash
 sampler.update(loss)
 ```
 
-5. Periodically resample the the momenta of parameters such as
+6. Periodically resample the the momenta of parameters and evaluate with test data such as
 
 ```bash
 sampler.resample_momenta()
+if abs(sampler.model.xi.item()) <= 0.85*sampler.smooth_area and nIter >= num_burn_in:
+  acc = estimator.evaluation()
 ```
 
-6. Go back to step 3
+``` num_burn_in ``` means the iterations of waiting for convergence of the algorithm, which shoud be int
+
+7. Go back to step 4
 
 ### Some Outstanding Utilities
 
