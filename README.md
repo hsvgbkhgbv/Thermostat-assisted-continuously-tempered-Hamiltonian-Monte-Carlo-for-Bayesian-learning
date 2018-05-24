@@ -242,21 +242,23 @@ sampler = TACTHMC(self, model, N, eta_theta0, eta_xi0, c_theta0, c_xi0, gamma_th
 sampler.resample_momenta()
 ```
 
-3. Update the parameters and the tempering variable such as
+3. Evaluate with training data and get ``` loss ```
+
+``` loss ``` can be the output from any loss function in Pytorch
+
+4. Update the parameters and the tempering variable such as
 
 ```bash
 sampler.update(loss)
 ```
 
-``` loss ``` can be the output from any loss function in Pytorch
-
-4. Periodically resample the the momenta of parameters such as
+5. Periodically resample the the momenta of parameters such as
 
 ```bash
 sampler.resample_momenta()
 ```
 
-5. Go back to step 1
+6. Go back to step 3
 
 ### Some Outstanding Utilities
 
