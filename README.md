@@ -264,7 +264,7 @@ sampler.resample_momenta()
 sampler.update(loss)
 ```
 
-6. Periodically resample the the momenta of parameters and evaluate with test data such as
+6. Periodically resample the momenta of parameters and evaluate with test data such as
 
 ```bash
 sampler.resample_momenta()
