@@ -278,7 +278,7 @@ if abs(sampler.model.xi.item()) <= 0.85*sampler.smooth_area and nIter >= num_bur
 
 7. Go back to step 4
 
-### Some Outstanding Utilities
+### Some Useful Utilities
 
 ```bash
 sampler.get_z_theta()                               # get the norm of thermostats of parameters
