@@ -268,7 +268,7 @@ sampler.update(loss)
 
 ```bash
 sampler.resample_momenta()
-if abs(sampler.model.xi.item()) <= 0.85*sampler.smooth_area and nIter >= num_burn_in:
+if abs(sampler.model.xi.item()) <= 0.85*sampler.standard_interval and nIter >= num_burn_in:
     acc = estimator.evaluation()
 ```
 
