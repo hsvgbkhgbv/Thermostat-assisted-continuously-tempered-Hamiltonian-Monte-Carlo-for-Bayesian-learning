@@ -1,4 +1,4 @@
-# TACTHMC
+# Thermostat-assisted continuously-tempered Hamiltonian Monte Carlo for Bayesian learning (TACTHMC)
 
 This project implements the algorithm of TACTHMC and demonstrates the experiments compared with SGHMC, SGNHT, ADAM and SGD WITH MOMENTUM.
 
